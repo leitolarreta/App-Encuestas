@@ -1,7 +1,5 @@
 // src/components/encuestas/EncuestasLista.jsx
 
-
-
 import React, { useState } from "react";
 import LanzarEncuestaModal from "./LanzarEncuestaModal";
 
@@ -21,7 +19,7 @@ const EncuestasLista = ({
 
   const confirmarLanzamiento = (fechas) => {
     if (encuestaSeleccionada && onLanzar) {
-      onLanzar({ ...encuestaSeleccionada, fechas });
+      onLanzar(encuestaSeleccionada, fechas); // ✅ dos params
       setLanzarVisible(false);
       setEncuestaSeleccionada(null);
     }
@@ -59,6 +57,7 @@ const EncuestasLista = ({
             </p>
             <p className="text-sm text-gray-700">Grupos: {renderGrupos(e.grupos)}</p>
             <div className="flex gap-2 mt-2">
+              {/* ✅ Solo los borradores se pueden editar */}
               <button
                 onClick={() => onSelectEncuesta(e)}
                 className="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 text-sm"
@@ -103,13 +102,7 @@ const EncuestasLista = ({
             </p>
             <p className="text-sm text-gray-700">Grupos: {renderGrupos(e.grupos)}</p>
             <div className="flex gap-2 mt-2">
-              <button
-                onClick={() => onSelectEncuesta(e)}
-                className="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 text-sm"
-              >
-                Editar
-              </button>
-      
+              {/* 🚫 Sin botón Editar en lanzadas */}
               <button
                 onClick={() => onEliminar(e.id)}
                 className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
