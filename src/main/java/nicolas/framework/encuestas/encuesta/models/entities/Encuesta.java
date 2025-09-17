@@ -58,5 +58,9 @@ public class Encuesta {
         this.grupos = grupos;
     }
 
+    public Encuesta(List<Pregunta> preguntas, List<Grupo> grupos) {
+        this.preguntas = preguntas;
+        this.grupos = grupos;
+    }
 
 }

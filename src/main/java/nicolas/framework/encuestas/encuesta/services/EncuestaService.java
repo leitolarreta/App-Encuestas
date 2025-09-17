@@ -40,23 +40,16 @@ public class EncuestaService implements IEncuestaService {
         // Traemos los grupos seleccionados
         List<Grupo> grupos = grupoService.buscarGrupos(encuestaDTO.getGrupos());
 
-        // Creamos una encuesta por cada grupo
-        for (Grupo grupo : grupos) {
             Encuesta encuesta = new Encuesta(
-                    encuestaDTO.getFechaInicio(),
-                    encuestaDTO.getFechaFin(),
-                    encuestaDTO.getFechaPCompletarInicio(),
-                    encuestaDTO.getFechaPCompletarFin(),
                     preguntas,
-                    List.of(grupo) // solo este grupo
+                    grupos
             );
             encuestaRepository.save(encuesta);
-        }
     }
 
 
     @Override
-    public void relanzarEncuesta(Long id, RelanzarEncuestaDTO fechas) {
+    public void lanzarEncuesta(Long id, RelanzarEncuestaDTO fechas) {
         Optional<Encuesta> encuestaOpt = encuestaRepository.findById(id);
         if (encuestaOpt.isPresent()) {
             Encuesta encuestaOriginal = encuestaOpt.get();

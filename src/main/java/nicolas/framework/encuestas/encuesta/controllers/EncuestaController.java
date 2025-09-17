@@ -65,8 +65,8 @@ public class EncuestaController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<HttpStatus> relanzarEncuesta(@PathVariable Long id, @RequestBody RelanzarEncuestaDTO fechas) {
-        encuestaService.relanzarEncuesta(id, fechas);
+    public ResponseEntity<HttpStatus> lanzarEncuesta(@PathVariable Long id, @RequestBody RelanzarEncuestaDTO fechas) {
+        encuestaService.lanzarEncuesta(id, fechas);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

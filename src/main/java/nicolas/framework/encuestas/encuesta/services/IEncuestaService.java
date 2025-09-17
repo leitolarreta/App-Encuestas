@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface IEncuestaService {
     void crearEncuesta(EncuestaInputDTO encuesta);
-    void relanzarEncuesta(Long id, RelanzarEncuestaDTO fechas);
+    void lanzarEncuesta(Long id, RelanzarEncuestaDTO fechas);
     public List<EncuestaOutputDTO> getEncuestaOutputDTOS(List<Encuesta> encuestas);
     public List<EncuestaOutputDTO> obtenerEncuestasPendientes(Long clienteId);
     List<EncuestaOutputDTO> findAll();

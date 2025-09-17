@@ -8,11 +8,10 @@ import {
   obtenerGrupos,
   crearPregunta,
   obtenerEncuestas,
-  relanzarEncuesta,
+  lanzarEncuesta,
   eliminarEncuesta
 } from '../../services/api';
 
-import FechaCampos from './FechaCampos';
 import GruposSelector from './GruposSelector';
 import PreguntasSelector from './PreguntasSelector';
 import EncuestasLista from './EncuestasLista';
@@ -45,10 +44,6 @@ export default function EncuestaForm() {
   // estado del form
   const [preguntaIdsSeleccionadas, setPreguntaIdsSeleccionadas] = useState([]);
   const [grupoIdsSeleccionados, setGrupoIdsSeleccionados] = useState([]);
-  const [fechaInicio, setFechaInicio] = useState('');
-  const [fechaFin, setFechaFin] = useState('');
-  const [fechaPCompletarInicio, setFechaPCompletarInicio] = useState('');
-  const [fechaPCompletarFin, setFechaPCompletarFin] = useState('');
   const [mensaje, setMensaje] = useState('');
 
   // buscadores
@@ -62,13 +57,6 @@ export default function EncuestaForm() {
   const [editingEncuestaId, setEditingEncuestaId] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
 
-  // relanzar
-  const [relanzarVisible, setRelanzarVisible] = useState(false);
-  const [relanzarFechaInicio, setRelanzarFechaInicio] = useState('');
-  const [relanzarFechaFin, setRelanzarFechaFin] = useState('');
-  const [relanzarPCompletarInicio, setRelanzarPCompletarInicio] = useState('');
-  const [relanzarPCompletarFin, setRelanzarPCompletarFin] = useState('');
-  const [encuestaARelanzar, setEncuestaARelanzar] = useState(null);
 
   // refs
   const preguntasListRef = useRef(null);
@@ -102,49 +90,6 @@ export default function EncuestaForm() {
   }
 };
 
-
-  // ==== RELANZAR ENCUESTA ====
-  const relanzar = (enc) => {
-    setEncuestaARelanzar(enc);
-    setRelanzarFechaInicio('');
-    setRelanzarFechaFin('');
-    setRelanzarPCompletarInicio('');
-    setRelanzarPCompletarFin('');
-    setRelanzarVisible(true);
-  };
-
-  const handleRelanzarSubmit = async () => {
-  if (!relanzarFechaInicio || !relanzarFechaFin || !relanzarPCompletarInicio || !relanzarPCompletarFin) {
-    setMensaje("⚠️ Debe seleccionar todas las fechas para relanzar");
-    return;
-  }
-  if (!encuestaARelanzar) return;
-
-  try {
-    // Si el objeto agrupado tiene encuestaIds (array), relanzamos cada uno.
-    const idsToRelanzar = encuestaARelanzar.encuestaIds && encuestaARelanzar.encuestaIds.length
-      ? encuestaARelanzar.encuestaIds
-      : [encuestaARelanzar.id];
-
-    // opcional: hacer las llamadas en paralelo
-    await Promise.all(idsToRelanzar.map(id =>
-      relanzarEncuesta(id, {
-        fechaInicio: relanzarFechaInicio,
-        fechaFin: relanzarFechaFin,
-        fechaPCompletarInicio: relanzarPCompletarInicio,
-        fechaPCompletarFin: relanzarPCompletarFin
-      })
-    ));
-
-    setMensaje("✅ Encuestas relanzadas correctamente");
-    setRelanzarVisible(false);
-    setEncuestaARelanzar(null);
-    await fetchEncuestas();
-  } catch (err) {
-    console.error(err);
-    setMensaje("❌ Error al relanzar encuesta(s)");
-  }
-};
 
 
   // filtros dinámicos
@@ -219,10 +164,6 @@ export default function EncuestaForm() {
   const resetForm = () => {
     setPreguntaIdsSeleccionadas([]);
     setGrupoIdsSeleccionados([]);
-    setFechaInicio('');
-    setFechaFin('');
-    setFechaPCompletarInicio('');
-    setFechaPCompletarFin('');
     setEditingEncuestaId(null);
     setBusqueda('');
     setBusquedaGrupo('');
@@ -238,10 +179,6 @@ export default function EncuestaForm() {
       const payload = {
         grupos: grupoIdsSeleccionados,
         preguntas: preguntaIdsSeleccionadas,
-        fechaInicio: fechaInicio || null,
-        fechaFin: fechaFin || null,
-        fechaPCompletarInicio: fechaPCompletarInicio || null,
-        fechaPCompletarFin: fechaPCompletarFin || null,
       };
       if (editingEncuestaId) {
         await editarEncuesta(editingEncuestaId, payload);
@@ -261,10 +198,6 @@ export default function EncuestaForm() {
   const selectEncuesta = (enc) => {
     setFormVisible(true);
     setEditingEncuestaId(enc.id);
-    setFechaInicio(toInputDate(enc.fechaInicio));
-    setFechaFin(toInputDate(enc.fechaFin));
-    setFechaPCompletarInicio(toInputDate(enc.fechaPCompletarInicio));
-    setFechaPCompletarFin(toInputDate(enc.fechaPCompletarFin));
 
     const grupos = Array.isArray(enc.grupos)
       ? enc.grupos.map(g => (typeof g === 'object' ? g.id : g))
@@ -280,10 +213,6 @@ export default function EncuestaForm() {
   const iniciarCrear = () => {
     setFormVisible(true);
     setEditingEncuestaId(null);
-    setFechaInicio('');
-    setFechaFin('');
-    setFechaPCompletarInicio('');
-    setFechaPCompletarFin('');
     setPreguntaIdsSeleccionadas([]);
     setGrupoIdsSeleccionados([]);
     setBusqueda('');
@@ -310,37 +239,7 @@ export default function EncuestaForm() {
       {formVisible && (
         <div className="mt-4 border rounded p-6 bg-gray-50">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <FechaCampos
-              fechaInicio={fechaInicio}
-              setFechaInicio={setFechaInicio}
-              fechaFin={fechaFin}
-              setFechaFin={setFechaFin}
-            />
-
             <div>
-  <label className="block text-sm font-semibold text-gray-700 mb-2">
-    PLAZO PARA RESPONDER LA ENCUESTA
-  </label>
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div>
-      <span className="block text-xs text-gray-500 mb-1">Desde</span>
-      <input
-        type="date"
-        value={fechaPCompletarInicio}
-        onChange={e => setFechaPCompletarInicio(e.target.value)}
-        className="w-full rounded-lg border px-4 py-2"
-      />
-    </div>
-    <div>
-      <span className="block text-xs text-gray-500 mb-1">Hasta</span>
-      <input
-        type="date"
-        value={fechaPCompletarFin}
-        onChange={e => setFechaPCompletarFin(e.target.value)}
-        className="w-full rounded-lg border px-4 py-2"
-      />
-    </div>
-  </div>
 </div>
 
             <GruposSelector
@@ -393,92 +292,26 @@ export default function EncuestaForm() {
         </div>
       )}
 
-      {/* MODAL RELANZAR */}
-{relanzarVisible && (
-  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-    <div className="bg-white p-6 rounded shadow-md w-96">
-      <h3 className="text-lg font-bold mb-4">Relanzar Encuesta</h3>
+   
 
-      {/* PERIODO DE EVALUACIÓN */}
-      <div className="mb-4">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          PERIODO DE EVALUACIÓN
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <span className="block text-xs text-gray-500 mb-1">Desde</span>
-            <input
-              type="date"
-              value={relanzarFechaInicio}
-              onChange={e => setRelanzarFechaInicio(e.target.value)}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-          <div>
-            <span className="block text-xs text-gray-500 mb-1">Hasta</span>
-            <input
-              type="date"
-              value={relanzarFechaFin}
-              onChange={e => setRelanzarFechaFin(e.target.value)}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-        </div>
-      </div>
+     <EncuestasLista
+  encuestasExistentes={encuestasExistentes}
+  onSelectEncuesta={selectEncuesta}
+  onEliminar={handleEliminarEncuesta}
+  onLanzar={async (encuesta, fechas) => {
+    try {
+      await lanzarEncuesta(encuesta.id, fechas);
+      setMensaje("✅ Encuesta lanzada correctamente");
+      await fetchEncuestas();
+    } catch (err) {
+      console.error(err);
+      setMensaje("❌ Error al lanzar encuesta");
+    }
+  }}
+  formatDate={formatDate}
+/>
 
-      {/* PLAZO PARA RESPONDER */}
-      <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          PLAZO PARA RESPONDER LA ENCUESTA
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <span className="block text-xs text-gray-500 mb-1">Desde</span>
-            <input
-              type="date"
-              value={relanzarPCompletarInicio}
-              onChange={e => setRelanzarPCompletarInicio(e.target.value)}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-          <div>
-            <span className="block text-xs text-gray-500 mb-1">Hasta</span>
-            <input
-              type="date"
-              value={relanzarPCompletarFin}
-              onChange={e => setRelanzarPCompletarFin(e.target.value)}
-              className="w-full border p-2 rounded"
-            />
-          </div>
-        </div>
-      </div>
 
-      {/* BOTONES */}
-      <div className="flex justify-end gap-2">
-        <button
-          onClick={() => setRelanzarVisible(false)}
-          className="px-4 py-2 border rounded"
-        >
-          Cancelar
-        </button>
-        <button
-          onClick={handleRelanzarSubmit}
-          className="px-4 py-2 bg-indigo-600 text-white rounded"
-        >
-          Relanzar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-      <EncuestasLista
-        encuestasExistentes={encuestasExistentes}
-        onSelectEncuesta={selectEncuesta}
-        onRelanzar={relanzar}
-          onEliminar={handleEliminarEncuesta}  
-        formatDate={formatDate}
-      />
     </div>
   );
 }
