@@ -17,4 +17,5 @@ public class EncuestaInputDTO {
     private LocalDate fechaFin;
     private LocalDate fechaPCompletarInicio;
     private LocalDate fechaPCompletarFin;
+    private String descripcion;
 }

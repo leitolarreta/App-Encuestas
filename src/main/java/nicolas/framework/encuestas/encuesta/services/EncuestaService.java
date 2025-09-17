@@ -41,6 +41,7 @@ public class EncuestaService implements IEncuestaService {
         List<Grupo> grupos = grupoService.buscarGrupos(encuestaDTO.getGrupos());
 
             Encuesta encuesta = new Encuesta(
+                    encuestaDTO.getDescripcion(),
                     preguntas,
                     grupos
             );
@@ -70,6 +71,7 @@ public class EncuestaService implements IEncuestaService {
                     fechas.getFechaFin(),
                     fechas.getFechaPCompletarInicio(),
                     fechas.getFechaPCompletarFin(),
+                    encuestaOriginal.getDescripcion(),
                     preguntas,
                     grupos
             );
@@ -129,6 +131,7 @@ public class EncuestaService implements IEncuestaService {
                             encuesta.getFechaFin(),
                             encuesta.getFechaPCompletarInicio(),
                             encuesta.getFechaPCompletarFin(),
+                            encuesta.getDescripcion(),
                             preguntasDTO,
                             null
                     );
@@ -232,6 +235,7 @@ public class EncuestaService implements IEncuestaService {
                             encuesta.getFechaFin(),
                             encuesta.getFechaPCompletarInicio(),
                             encuesta.getFechaPCompletarFin(),
+                            encuesta.getDescripcion(),
                             preguntas,
                             grupos
                     );

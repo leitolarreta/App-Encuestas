@@ -1,5 +1,6 @@
 package nicolas.framework.encuestas.encuesta.models.entities;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +11,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Encuesta {
 
     @Id
@@ -33,6 +36,9 @@ public class Encuesta {
     @Column
     private LocalDate fechaPCompletarFin;
 
+    @Column(nullable = true)
+    private String descripcion;
+
     @ManyToMany
     @JoinTable(
             name = "encuesta_x_pregunta",
@@ -49,18 +55,21 @@ public class Encuesta {
     )
     private List<Grupo> grupos = new ArrayList<>();
 
-    public Encuesta(LocalDate fechaInicio, LocalDate fechaFin, LocalDate fechaPCompletarInicio, LocalDate fechaPCompletarFin, List<Pregunta> preguntas, List<Grupo> grupos) {
+
+    public Encuesta(String desc, List<Pregunta> preguntas, List<Grupo> grupos) {
+        this.descripcion = desc;
+        this.preguntas = preguntas;
+        this.grupos = grupos;
+    }
+
+
+    public Encuesta(LocalDate fechaInicio, LocalDate fechaFin, LocalDate fechaPCompletarInicio, LocalDate fechaPCompletarFin, @Nullable String descripcion, List<Pregunta> preguntas, List<Grupo> grupos) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.fechaPCompletarInicio = fechaPCompletarInicio;
         this.fechaPCompletarFin = fechaPCompletarFin;
+        this.descripcion = descripcion;
         this.preguntas = preguntas;
         this.grupos = grupos;
     }
-
-    public Encuesta(List<Pregunta> preguntas, List<Grupo> grupos) {
-        this.preguntas = preguntas;
-        this.grupos = grupos;
-    }
-
 }

@@ -333,16 +333,29 @@ const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
                     <div className={`rounded-lg px-6 py-4 shadow-sm text-center border ${colorDeFondoPorGrupo(
   encuesta.grupos?.[0]?.descripcion
 )}`}>
+
+  {encuesta.descripcion && (
+  <div className="mb-4 text-center">
+    <h3 className="text-lg font-semibold text-gray-800">{encuesta.descripcion}</h3>
+  </div>
+)}
+
   <p className="text-sm">
     <span className="font-medium">Período evaluado:</span>{' '}
     {formatPeriodoMeses(encuesta.fechaInicio, encuesta.fechaFin)}
   </p>
+
   <p className="text-sm">
     <span className="font-medium">Grupo:</span>{' '}
     {encuesta.grupoDelCliente?.descripcion || `Grupo ${encuesta.grupoDelCliente?.id}`}
   </p>
 </div>
+
+
+
                   </div>
+
+                  
 
                   <div className="space-y-6">
                     {(encuesta.preguntas || []).map(pregunta => {

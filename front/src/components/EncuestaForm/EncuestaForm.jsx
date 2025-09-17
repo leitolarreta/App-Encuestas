@@ -40,6 +40,8 @@ export default function EncuestaForm() {
   // datos base
   const [preguntasDisponibles, setPreguntasDisponibles] = useState([]);
   const [gruposDisponibles, setGruposDisponibles] = useState([]);
+const [descripcion, setDescripcion] = useState('');
+
 
   // estado del form
   const [preguntaIdsSeleccionadas, setPreguntaIdsSeleccionadas] = useState([]);
@@ -164,6 +166,7 @@ export default function EncuestaForm() {
   const resetForm = () => {
     setPreguntaIdsSeleccionadas([]);
     setGrupoIdsSeleccionados([]);
+    setDescripcion('');
     setEditingEncuestaId(null);
     setBusqueda('');
     setBusquedaGrupo('');
@@ -177,9 +180,11 @@ export default function EncuestaForm() {
     e.preventDefault();
     try {
       const payload = {
-        grupos: grupoIdsSeleccionados,
-        preguntas: preguntaIdsSeleccionadas,
-      };
+  grupos: grupoIdsSeleccionados,
+  preguntas: preguntaIdsSeleccionadas,
+  descripcion: descripcion?.trim() || null,
+};
+
       if (editingEncuestaId) {
         await editarEncuesta(editingEncuestaId, payload);
         setMensaje('✅ Encuesta actualizada correctamente');
@@ -207,6 +212,7 @@ export default function EncuestaForm() {
       : [];
     setGrupoIdsSeleccionados(grupos);
     setPreguntaIdsSeleccionadas(preguntas);
+    setDescripcion(enc.descripcion || '');
     setMensaje('');
   };
 
@@ -241,6 +247,20 @@ export default function EncuestaForm() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
 </div>
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Descripción (opcional)
+  </label>
+  <input
+    type="text"
+    value={descripcion}
+    onChange={(e) => setDescripcion(e.target.value)}
+    placeholder="Ej: Encuesta de clima laboral Q1"
+    className="w-full border rounded px-3 py-2 text-sm"
+  />
+</div>
+
 
             <GruposSelector
               gruposDisponibles={gruposDisponibles}

@@ -110,9 +110,9 @@ public class CargaInicial implements CommandLineRunner {
             LocalDate mañana = hoy.plusDays(1);
             LocalDate periodo1 = hoy.plusDays(50);
             LocalDate periodo2 = hoy.plusDays(100);
+            String descripcion = "Encuesta prueba";
 
-
-            EncuestaInputDTO encuestaInputDTO = new EncuestaInputDTO(gruposId, preguntasId, periodo1, periodo2, hoy, mañana);
+            EncuestaInputDTO encuestaInputDTO = new EncuestaInputDTO(gruposId, preguntasId, periodo1, periodo2, hoy, mañana, descripcion);
             encuestaService.crearEncuesta(encuestaInputDTO);
 
 

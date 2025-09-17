@@ -42,7 +42,7 @@ const EncuestasLista = ({
     <div className="space-y-6">
       {/* BORRADORES */}
       <div>
-        <h3 className="text-xl font-semibold text-gray-700 mb-2">Borradores</h3>
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Encuestas</h3>
         {encuestasBorrador.length === 0 && <p>No hay encuestas en borrador.</p>}
         {encuestasBorrador.map((e) => (
           <div
@@ -83,7 +83,7 @@ const EncuestasLista = ({
 
       {/* LANZADAS */}
       <div>
-        <h3 className="text-xl font-semibold text-gray-700 mb-2">Lanzadas</h3>
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Encuestas Lanzadas</h3>
         {encuestasLanzadas.length === 0 && <p>No hay encuestas lanzadas.</p>}
         {encuestasLanzadas.map((e) => (
           <div

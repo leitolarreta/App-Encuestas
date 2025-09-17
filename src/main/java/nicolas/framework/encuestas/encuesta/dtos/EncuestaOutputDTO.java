@@ -16,30 +16,17 @@ public class EncuestaOutputDTO {
     private LocalDate fechaFin;
     private LocalDate fechaPCompletarInicio;
     private LocalDate fechaPCompletarFin;
+    private String descripcion;
     private List<PreguntaOutputDTO> preguntas;
     private List<GrupoOutputDTO> grupos;
     private GrupoOutputDTO grupoDelCliente;
 
-    //sin grupoDelCliente
-    public EncuestaOutputDTO(LocalDate fechaInicio,
-                             LocalDate fechaFin,
-                             LocalDate fechaPCompletarInicio,
-                             LocalDate fechaPCompletarFin,
-                             List<PreguntaOutputDTO> preguntas,
-                             List<GrupoOutputDTO> grupos) {
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.fechaPCompletarInicio = fechaPCompletarInicio;
-        this.fechaPCompletarFin = fechaPCompletarFin;
-        this.preguntas = preguntas;
-        this.grupos = grupos;
-        this.grupoDelCliente = null;
-    }
 
     public EncuestaOutputDTO(Long id, LocalDate fechaInicio,
                              LocalDate fechaFin,
                              LocalDate fechaPCompletarInicio,
                              LocalDate fechaPCompletarFin,
+                             String descripcion,
                              List<PreguntaOutputDTO> preguntas,
                              List<GrupoOutputDTO> grupos) {
         this.id = id;
@@ -47,6 +34,7 @@ public class EncuestaOutputDTO {
         this.fechaFin = fechaFin;
         this.fechaPCompletarInicio = fechaPCompletarInicio;
         this.fechaPCompletarFin = fechaPCompletarFin;
+        this.descripcion = descripcion;
         this.preguntas = preguntas;
         this.grupos = grupos;
         this.grupoDelCliente = null;
