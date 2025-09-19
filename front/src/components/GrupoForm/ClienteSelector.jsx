@@ -51,7 +51,7 @@ export default function ClienteSelector({ bancos = [], clienteExtension, cliente
                     );
                 })}
                 {!bancosFiltrados.length && (
-                    <p className="text-xs text-gray-500">No hay bancos con ese filtro.</p>
+                    <p className="text-xs text-gray-500">No hay clientes con ese filtro.</p>
                 )}
             </div>
         </div>

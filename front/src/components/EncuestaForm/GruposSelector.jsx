@@ -30,7 +30,7 @@ export default function GruposSelector({
                     onChange={e => setBusquedaGrupo(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }}
                     className="flex-1 border px-3 py-2 rounded"
-                    placeholder="Buscar grupo o banco..."
+                    placeholder="Buscar grupo o cliente..."
                 />
                 <button
                     type="button"

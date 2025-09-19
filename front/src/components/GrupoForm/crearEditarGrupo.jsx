@@ -46,7 +46,7 @@ export default function CrearEditarGrupos({ onSave = async () => {} }) {
 
     obtenerBancos()
         .then((res) => setBancos(Array.isArray(res.data) ? res.data : []))
-        .catch(() => setMensaje('❌ Error al cargar bancos'));
+        .catch(() => setMensaje('❌ Error al cargar clientes'));
 
     refreshGrupos();
   }, []);
