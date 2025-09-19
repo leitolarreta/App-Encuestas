@@ -5,6 +5,7 @@ import nicolas.framework.encuestas.encuesta.dtos.*;
 import nicolas.framework.encuestas.encuesta.models.entities.Encuesta;
 import nicolas.framework.encuestas.encuesta.models.entities.Grupo;
 import nicolas.framework.encuestas.encuesta.models.entities.Pregunta;
+import nicolas.framework.encuestas.encuesta.models.entities.User;
 import nicolas.framework.encuestas.encuesta.models.repositories.EncuestaRepository;
 import nicolas.framework.encuestas.encuesta.models.repositories.RespuestaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class EncuestaService implements IEncuestaService {
 
     @Autowired
     private RespuestaRepository respuestaRepository;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public void crearEncuesta(EncuestaInputDTO encuestaDTO) {
@@ -76,7 +80,25 @@ public class EncuestaService implements IEncuestaService {
                     grupos
             );
 
+            enviarMails(grupos);
+
             encuestaRepository.save(nuevaEncuesta);
+        }
+    }
+
+    public void enviarMails(List<Grupo> grupos) {
+
+        String subject = "Nueva Encuesta pendiente";
+
+        for(Grupo grupo : grupos){
+            List<User> referentes = grupo.getClientes();
+
+            for(User referente : referentes){
+
+                String body = "Hola! Tenes una encuesta pendiente a responder sobre el equipo "
+                        + grupo.getNombre() + "\nPodes responderla ingresando a: ";
+                emailSenderService.sendEmail(referente.getUsername(), subject, body);
+            }
         }
     }
 

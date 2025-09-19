@@ -46,6 +46,14 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Java mail sender -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>4.0.0-M3</version>
+		</dependency>
+
 		<!-- MySQL Driver -->
 		<dependency>
 			<groupId>com.mysql</groupId>
