@@ -22,7 +22,7 @@ export default function ClienteSelector({ bancos = [], clienteExtension, cliente
 
     return (
         <div>
-            <h4 className="font-semibold text-gray-700 mb-2">Seleccioná cliente</h4>
+            <h4 className="font-semibold text-gray-700 mb-2">Seleccioná Cliente</h4>
 
             <input
                 type="text"

@@ -90,8 +90,8 @@ export default function AdminDashboard() {
           <TabsContent value="grupos" className="bg-white p-6 rounded-xl shadow">
             <h2 className="text-xl font-semibold mb-2">Cargar Grupo</h2>
             <p className="text-gray-500 mb-4">
-              Dá de alta grupos o colaboradores y asignales uno o muchos
-              clientes.
+              Da de alta grupos y asignales uno o varios
+              referentes.
             </p>
             <CrearGrupoYAsignar />
           </TabsContent>

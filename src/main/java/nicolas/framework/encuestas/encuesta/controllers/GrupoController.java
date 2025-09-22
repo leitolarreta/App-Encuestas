@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Grupos")
 @RestController
 @RequestMapping("/grupos")
 public class GrupoController {

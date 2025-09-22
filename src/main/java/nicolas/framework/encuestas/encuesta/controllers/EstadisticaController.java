@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-@Tag(name = "Estadisticas")
 @RestController
 @RequestMapping("/estadisticas")
 public class EstadisticaController {

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Respuestas")
 @RestController
 @RequestMapping("/clientes/{clienteId}/encuestas/{encuestaId}/respuestas")
 public class RespuestaController {

@@ -190,7 +190,7 @@ export default function CargarClienteForm() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Nombre del cliente (banco)
+            Nombre del Cliente
           </label>
           <input
             type="text"

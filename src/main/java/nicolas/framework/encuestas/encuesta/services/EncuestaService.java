@@ -88,16 +88,27 @@ public class EncuestaService implements IEncuestaService {
 
     public void enviarMails(List<Grupo> grupos) {
 
-        String subject = "Nueva Encuesta pendiente";
+        String subject = "Nueva Encuesta disponible";
 
         for(Grupo grupo : grupos){
             List<User> referentes = grupo.getClientes();
 
             for(User referente : referentes){
 
-                String body = "Hola! Tenes una encuesta pendiente a responder sobre el equipo "
-                        + grupo.getNombre() + "\nPodes responderla ingresando a: ";
+                if(referente.isMustChangePassword()){
+                String body = "Hola! Tenes una encuesta para responder sobre el equipo "
+                        + grupo.getNombre() + "\nPodes responderla ingresando a: " +
+                        " con la contraseña: " + referente.getPassword() +
+                        "\nContamos con tu feedback, es muy importante para nosotros.\n" +
+                        "Gracias!";
                 emailSenderService.sendEmail(referente.getUsername(), subject, body);
+                }
+                else{
+                    String body = "Hola! Tenes una encuesta para responder sobre el equipo "
+                            + grupo.getNombre() + "\nPodes responderla ingresando a: ";
+                    emailSenderService.sendEmail(referente.getUsername(), subject, body);
+                }
+
             }
         }
     }
