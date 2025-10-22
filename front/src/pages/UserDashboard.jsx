@@ -68,7 +68,7 @@ function colorDeFondoPorGrupo(nombreGrupo = '') {
 const encuestaCompletadaLocal = (encuesta, respuestas) => {
   if (!encuesta?.preguntas?.length) return false;
   return encuesta.preguntas.every(p => {
-    const clave = `${encuesta.id}_${p.id}`;
+    const clave = `${encuesta.id}_${p.id}_${encuesta.grupoDelCliente?.id}`;
     return respuestas[clave]?.puntaje; // tiene puntaje asignado
   });
 };
@@ -164,7 +164,7 @@ export default function UserDashboard() {
 
   const nuevasRespuestas = { ...respuestas };
 
-  // Iteramos por todas las encuestas del usuario
+  // Iteramos todas las encuestas del usuario
   encuestas.forEach(encuestaDestino => {
     if (encuestaDestino.id === encuestaId) return; // saltamos la encuesta origen
 
@@ -174,24 +174,27 @@ export default function UserDashboard() {
       preguntasDestinoMap[p.texto] = p;
     });
 
+    // Ahora recorremos las preguntas de la encuesta origen
     (encuestaOrigen.preguntas || []).forEach(preguntaOrigen => {
-      const claveOrigen = `${encuestaId}_${preguntaOrigen.id}`;
+      const grupoOrigenId = encuestaOrigen.grupoDelCliente?.id || 1;
+      const claveOrigen = `${encuestaId}_${preguntaOrigen.id}_${grupoOrigenId}`;
       const puntaje = respuestas[claveOrigen]?.puntaje;
 
       if (puntaje != null && preguntasDestinoMap[preguntaOrigen.texto]) {
         const pDestino = preguntasDestinoMap[preguntaOrigen.texto];
-        const claveDestino = `${encuestaDestino.id}_${pDestino.id}`;
+        const grupoDestinoId = encuestaDestino.grupoDelCliente?.id || 1;
+        const claveDestino = `${encuestaDestino.id}_${pDestino.id}_${grupoDestinoId}`;
+
         nuevasRespuestas[claveDestino] = {
           ...nuevasRespuestas[claveDestino],
           puntaje,
-          grupoId: encuestaDestino.grupoDelCliente?.id || 1
+          grupoId: grupoDestinoId
         };
       }
     });
   });
 
   setRespuestas(nuevasRespuestas);
-  // también guardamos en localStorage para persistencia
   localStorage.setItem('respuestasEncuesta', JSON.stringify(nuevasRespuestas));
   setMensaje('✅ Puntajes replicados a encuestas con preguntas coincidentes');
 };
@@ -203,7 +206,7 @@ export default function UserDashboard() {
 };
 
 const handlePuntajeChange = (preguntaId, encuestaId, grupoId, puntaje) => {
-  const clave = `${encuestaId}_${preguntaId}`;
+  const clave = `${encuestaId}_${preguntaId}_${grupoId}`;
   setRespuestas(prev => {
     const nuevas = { ...prev, [clave]: { ...prev[clave], grupoId, puntaje } };
     guardarRespuestasEnStorage(nuevas); // guardamos en storage
@@ -211,8 +214,8 @@ const handlePuntajeChange = (preguntaId, encuestaId, grupoId, puntaje) => {
   });
 };
 
-const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
-  const clave = `${encuestaId}_${preguntaId}`;
+const handleJustificacionChange = (preguntaId, encuestaId, grupoId, justificacion) => {
+  const clave = `${encuestaId}_${preguntaId}_${grupoId}`;
   setRespuestas(prev => {
     const nuevas = { ...prev, [clave]: { ...prev[clave], justificacion } };
     guardarRespuestasEnStorage(nuevas);
@@ -227,7 +230,7 @@ const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
   const validarEncuesta = (encuesta) => {
     const preguntas = encuesta.preguntas || [];
     for (const p of preguntas) {
-      const clave = `${encuesta.id}_${p.id}`;
+      const clave = `${encuesta.id}_${p.id}_${encuesta.grupoDelCliente?.id}`;
       const resp = respuestas[clave];
       if (!resp?.puntaje) {
         setMensaje(`⚠️ Falta puntaje en la pregunta "${p.texto}"`);
@@ -257,7 +260,7 @@ const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
     }
 
     const payload = (encuesta.preguntas || []).map(p => {
-      const clave = `${encuesta.id}_${p.id}`;
+      const clave = `${encuesta.id}_${p.id}_${encuesta.grupoDelCliente?.id}`;
       const data = respuestas[clave];
       return {
         preguntaId: p.id,
@@ -359,7 +362,7 @@ const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
 
                   <div className="space-y-6">
                     {(encuesta.preguntas || []).map(pregunta => {
-                      const clave = `${encuesta.id}_${pregunta.id}`;
+                      const clave = `${encuesta.id}_${pregunta.id}_${encuesta.grupoDelCliente?.id}`;
                       const puntaje = respuestas[clave]?.puntaje;
                       const valor = Number.isFinite(puntaje) ? Number(puntaje) : 0;
 
@@ -367,7 +370,7 @@ const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
                       if (!justifRefs.current[clave]) justifRefs.current[clave] = null;
 
                       return (
-                        <div key={pregunta.id} className="bg-white border border-gray-200 rounded-lg p-5">
+                        <div key={`${encuesta.id}_${pregunta.id}_${encuesta.grupoDelCliente?.id}`} className="bg-white border border-gray-200 rounded-lg p-5">
                           <p className="text-sm font-medium text-gray-800 mb-2">{pregunta.texto}</p>
 
                           <div className="flex flex-col gap-3 mb-3">
@@ -389,7 +392,7 @@ const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
                                   '1 - Muy malo','2','3','4','5 - Regular',
                                   '6','7','8 - Bueno','9','10 - Excelente'
                                 ]}
-                                name={`puntaje_${encuesta.id}_${pregunta.id}`}
+                                name={`puntaje_${encuesta.id}_${pregunta.id}_${encuesta.grupoDelCliente?.id}`}
                               />
                               <span className="text-sm text-gray-600 min-w-[90px] text-right">
                                 {valor ? `Puntaje: ${valor}/10` : 'Sin puntaje'}
@@ -405,7 +408,7 @@ const handleJustificacionChange = (preguntaId, encuestaId, justificacion) => {
       ref={(el) => (justifRefs.current[clave] = el)}
       value={respuestas[clave]?.justificacion || ''}
       onChange={e =>
-        handleJustificacionChange(pregunta.id, encuesta.id, e.target.value)
+        handleJustificacionChange(pregunta.id, encuesta.id, encuesta.grupoDelCliente?.id, e.target.value)
       }
     />
     <span className="absolute bottom-1 right-2 text-xs text-gray-400">
