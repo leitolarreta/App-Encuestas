@@ -10,60 +10,9 @@ import {
 import { CheckCircle, AlertCircle, Loader2, CopyIcon } from 'lucide-react';
 import RatingStars from '../components/RatingStars';
 import logo from './logoaccenture.png';
+import {colorDeFondoPorGrupo, formatPeriodoMeses} from '../utils/EncuestaUtils'
+ 
 
-
-const COLORES_GRUPO = [
-  'bg-blue-100 border-blue-300 text-blue-800',
-  'bg-green-100 border-green-300 text-green-800',
-  'bg-yellow-100 border-yellow-300 text-yellow-800',
-  'bg-purple-100 border-purple-300 text-purple-800',
-  'bg-pink-100 border-pink-300 text-pink-800',
-  'bg-indigo-100 border-indigo-300 text-indigo-800',
-  'bg-orange-100 border-orange-300 text-orange-800',
-  'bg-rose-100 border-rose-300 text-rose-800',
-];
-
-
-const formatPeriodoMeses = (inicio, fin) => {
-  if (!inicio || !fin) return '-';
-
-  const [añoIni, mesIni] = inicio.split('-').map(Number);
-  const [añoFin, mesFin] = fin.split('-').map(Number);
-
-  const optsMes = { month: 'long' };
-  const optsMesAnio = { month: 'long', year: 'numeric' };
-
-  const fechaIni = new Date(añoIni, mesIni - 1);
-  const fechaFin = new Date(añoFin, mesFin - 1);
-
-  // mismo año → Octubre - Diciembre 2025
-  if (añoIni === añoFin) {
-    const mesInicio = fechaIni.toLocaleDateString('es-AR', optsMes);
-    const mesFin = fechaFin.toLocaleDateString('es-AR', optsMesAnio);
-    return `${capitalize(mesInicio)} - ${capitalize(mesFin)}`;
-  }
-
-  // distinto año → Diciembre 2024 - Febrero 2025
-  return `${capitalize(fechaIni.toLocaleDateString('es-AR', optsMesAnio))} - ${capitalize(fechaFin.toLocaleDateString('es-AR', optsMesAnio))}`;
-};
-
-// helper para capitalizar primera letra
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-
-
-const grupoColorMap = new Map();
-let coloresUsados = new Set();
-function colorDeFondoPorGrupo(nombreGrupo = '') {
-  if (grupoColorMap.has(nombreGrupo)) return grupoColorMap.get(nombreGrupo);
-  const disponibles = COLORES_GRUPO.filter(c => !coloresUsados.has(c));
-  const color =
-    disponibles[Math.floor(Math.random() * disponibles.length)] ||
-    COLORES_GRUPO[Math.floor(Math.random() * COLORES_GRUPO.length)];
-  grupoColorMap.set(nombreGrupo, color);
-  coloresUsados.add(color);
-  return color;
-}
 
 const encuestaCompletadaLocal = (encuesta, respuestas) => {
   if (!encuesta?.preguntas?.length) return false;
@@ -159,8 +108,15 @@ export default function UserDashboard() {
   }, [claveError]);
 
   const replicarRespuestasDeEncuesta = (encuestaId) => {
+      console.log('--- replicarRespuestasDeEncuesta start ---', { encuestaId });
+
+       let copias = 0;
   const encuestaOrigen = encuestas.find(e => e.id === encuestaId);
-  if (!encuestaOrigen) return;
+  
+  if (!encuestaOrigen) {
+    console.warn('No encontre encuesta origen', encuestaId);
+    return;
+  }
 
   const nuevasRespuestas = { ...respuestas };
 
@@ -190,13 +146,17 @@ export default function UserDashboard() {
           puntaje,
           grupoId: grupoDestinoId
         };
+                copias++;
+                console.log(`✅ Copiada claveOrigen -> claveDestino`, { claveOrigen, claveDestino, puntaje });
+
       }
     });
   });
 
+    console.log(`Replicacion completada. Copias realizadas: ${copias}`);
   setRespuestas(nuevasRespuestas);
   localStorage.setItem('respuestasEncuesta', JSON.stringify(nuevasRespuestas));
-  setMensaje('✅ Puntajes replicados a encuestas con preguntas coincidentes');
+    setMensaje(`✅ Puntajes replicados a ${copias} preguntas de otras encuestas`);
 };
 
 
@@ -331,7 +291,7 @@ const handleJustificacionChange = (preguntaId, encuestaId, grupoId, justificacio
             {encuestas
               .filter(encuesta => !encuestasRespondidas.has(encuesta.id))
               .map(encuesta => (
-                <div key={encuesta.id} className="bg-gray-50 border border-gray-200 rounded-xl p-6 transition-all duration-500 ease-in-out">
+                <div key={`${encuesta.id}-${encuesta.grupoDelCliente?.id || 'grupo'}-${encuesta.descripcion || 'sin-desc'}-${encuesta.fechaInicio || 'borrador'}`} className="bg-gray-50 border border-gray-200 rounded-xl p-6 transition-all duration-500 ease-in-out">
                   <div className="mb-4">
                     <div className={`rounded-lg px-6 py-4 shadow-sm text-center border ${colorDeFondoPorGrupo(
   encuesta.grupos?.[0]?.descripcion
@@ -370,7 +330,8 @@ const handleJustificacionChange = (preguntaId, encuestaId, grupoId, justificacio
                       if (!justifRefs.current[clave]) justifRefs.current[clave] = null;
 
                       return (
-                        <div key={`${encuesta.id}_${pregunta.id}_${encuesta.grupoDelCliente?.id}`} className="bg-white border border-gray-200 rounded-lg p-5">
+                        <div   key={`${encuesta.id}_${pregunta.id}_${encuesta.grupoDelCliente?.id || 'grupo'}_${pregunta.texto?.slice(0,30) || 'texto'}`}
+ className="bg-white border border-gray-200 rounded-lg p-5">
                           <p className="text-sm font-medium text-gray-800 mb-2">{pregunta.texto}</p>
 
                           <div className="flex flex-col gap-3 mb-3">
