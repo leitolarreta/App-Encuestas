@@ -244,8 +244,24 @@ const handleJustificacionChange = (preguntaId, encuestaId, grupoId, justificacio
 });
 
       // saca encuesta de la lista y marca como respondida
-      setEncuestas(prev => prev.filter(e => e.id !== encuestaId));
-      setEncuestasRespondidas(prev => new Set(prev).add(encuestaId));
+   // ✅ Sacamos solo la encuesta del grupo correspondiente, no todas las del mismo template
+setEncuestas(prev =>
+  prev.filter(
+    e =>
+      !(
+        e.id === encuestaId &&
+        e.grupoDelCliente?.id === encuesta.grupoDelCliente?.id
+      )
+  )
+);
+
+// ✅ Marcamos como respondida esa combinación id+grupo
+setEncuestasRespondidas(prev => {
+  const nuevas = new Set(prev);
+  nuevas.add(`${encuestaId}_${encuesta.grupoDelCliente?.id}`);
+  return nuevas;
+});
+
     } catch {
       setMensaje('❌ Error al enviar respuestas');
     } finally {
@@ -289,7 +305,10 @@ const handleJustificacionChange = (preguntaId, encuestaId, grupoId, justificacio
         ) : (
           <div className="space-y-10">
             {encuestas
-              .filter(encuesta => !encuestasRespondidas.has(encuesta.id))
+.filter(
+  encuesta =>
+    !encuestasRespondidas.has(`${encuesta.id}_${encuesta.grupoDelCliente?.id}`)
+)
               .map(encuesta => (
                 <div key={`${encuesta.id}-${encuesta.grupoDelCliente?.id || 'grupo'}-${encuesta.descripcion || 'sin-desc'}-${encuesta.fechaInicio || 'borrador'}`} className="bg-gray-50 border border-gray-200 rounded-xl p-6 transition-all duration-500 ease-in-out">
                   <div className="mb-4">
