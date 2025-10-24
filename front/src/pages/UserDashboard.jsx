@@ -122,7 +122,7 @@ export default function UserDashboard() {
 
   // Iteramos todas las encuestas del usuario
   encuestas.forEach(encuestaDestino => {
-    if (encuestaDestino.id === encuestaId) return; // saltamos la encuesta origen
+    //if (encuestaDestino.id === encuestaId) return; // NO SALTEAMOS LA DE ORIGEN POR COMO ES EL DOMINIO
 
     // Mapeamos preguntas por texto para poder replicar
     const preguntasDestinoMap = {};
@@ -156,7 +156,7 @@ export default function UserDashboard() {
     console.log(`Replicacion completada. Copias realizadas: ${copias}`);
   setRespuestas(nuevasRespuestas);
   localStorage.setItem('respuestasEncuesta', JSON.stringify(nuevasRespuestas));
-    setMensaje(`✅ Puntajes replicados a ${copias} preguntas de otras encuestas`);
+    setMensaje(`✅ Puntajes replicados`);
 };
 
 
