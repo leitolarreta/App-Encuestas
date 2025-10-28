@@ -12,6 +12,7 @@ export const COLORES_GRUPO = [
 const grupoColorMap = new Map();
 let coloresUsados = new Set();
 
+
 export function colorDeFondoPorGrupo(nombreGrupo = '') {
   if (grupoColorMap.has(nombreGrupo)) return grupoColorMap.get(nombreGrupo);
   const disponibles = COLORES_GRUPO.filter(c => !coloresUsados.has(c));

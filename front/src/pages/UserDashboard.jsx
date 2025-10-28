@@ -11,7 +11,6 @@ import { CheckCircle, AlertCircle, Loader2, CopyIcon } from 'lucide-react';
 import RatingStars from '../components/RatingStars';
 import logo from './logoaccenture.png';
 import {colorDeFondoPorGrupo, formatPeriodoMeses} from '../utils/EncuestaUtils'
- 
 
 
 const encuestaCompletadaLocal = (encuesta, respuestas) => {
